@@ -1,19 +1,9 @@
-# 1-install_a_package.pp
-
-# Install Python 3.8.10
-class { 'python':
-  version => '3.8.10',
-}
-
-# Install Flask 2.1.0 and Werkzeug 2.1.1
-package { 'Flask':
+# Using Puppet, install flask from pip3
+package { 'flask':
   ensure   => '2.1.0',
   provider => 'pip3',
-  require  => Class['python'],
 }
-
-package { 'Werkzeug':
+package { 'werkzeug':
   ensure   => '2.1.1',
   provider => 'pip3',
-  require  => Class['python'],
 }
