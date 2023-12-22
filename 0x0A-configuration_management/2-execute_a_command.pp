@@ -1,7 +1,6 @@
-# Puppet Manifest: 2-execute_a_command.pp
-# Description: Terminate the process named killmenow
-
+# Kill killmenow process
 exec { 'killmenow':
-  command => 'pkill -f killmenow',
-  onlyif  => 'pgrep -f killmenow',
+  command => '/usr/bin/pkill -f killmenow',
+  path    => ['/bin', '/usr/bin'],
+  onlyif  => '/usr/bin/pgrep -f killmenow',
 }
