@@ -1,24 +1,6 @@
 #!/usr/bin/env bash
-
-# Update the package list
-apt-get update
-
-# Install nginx
-apt-get install -y nginx
-
-# Create a simple HTML page with "Hello World!"
-echo "<!DOCTYPE html><html><head><title>Hello World!</title></head><body><p>Hello World!</p></body></html>" > /var/www/html/index.html
-
-# Start nginx (this won't use systemctl)
-/usr/sbin/nginx
-
-# Wait for nginx to start
-sleep 2
-
-# Verify that nginx is listening on port 80
-if [ "$(curl -s -I http://localhost | head -n 1 | grep '200 OK')" ]; then
-    echo "Nginx is listening on port 80"
-else
-    echo "Nginx is not listening on port 80"
-fi
-
+# Script that installs Nginx server
+apt-get -y update
+apt-get -y install nginx
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
+service nginx start
