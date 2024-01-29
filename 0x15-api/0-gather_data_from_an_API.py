@@ -1,30 +1,51 @@
 #!/usr/bin/python3
-'''A script that gathers employee name completed
+'''
+A script that gathers employee name completed
 tasks and total number of tasks from an API
 '''
-
-import re
 import requests
 import sys
 
-REST_API = "https://jsonplaceholder.typicode.com"
+def get_employee_todo_progress(employee_id):
+    # API endpoint for fetching user's TODO list
+    api_url = f'https://jsonplaceholder.typicode.com/todos?userId={employee_id}'
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        if re.fullmatch(r'\d+', sys.argv[1]):
-            id = int(sys.argv[1])
-            emp_req = requests.get('{}/users/{}'.format(REST_API, id)).json()
-            task_req = requests.get('{}/todos'.format(REST_API)).json()
-            emp_name = emp_req.get('name')
-            tasks = list(filter(lambda x: x.get('userId') == id, task_req))
-            completed_tasks = list(filter(lambda x: x.get('completed'), tasks))
-            print(
-                'Employee {} is done with tasks({}/{}):'.format(
-                    emp_name,
-                    len(completed_tasks),
-                    len(tasks)
-                )
-            )
-            if len(completed_tasks) > 0:
-                for task in completed_tasks:
-                    print('\t {}'.format(task.get('title')))
+    try:
+        # Make a GET request to the API
+        response = requests.get(api_url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            todos = response.json()
+
+            # Filter completed tasks
+            completed_tasks = [todo['title'] for todo in todos if todo['completed']]
+
+            # Display progress information
+            print(f"Employee {todos[0]['userId']} {todos[0]['title']} is done with tasks"
+                  f"({len(completed_tasks)}/{len(todos)}):")
+
+            # Display titles of completed tasks
+            for task in completed_tasks:
+                print(f"\t{task}")
+
+        else:
+            # Display an error message if the request was not successful
+            print(f"Error: Unable to fetch data. Status code: {response.status_code}")
+
+    except requests.RequestException as e:
+        # Handle any exceptions that may occur during the request
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    # Check if the script is provided with an employee ID as a command-line argument
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <employee_id>")
+        sys.exit(1)
+
+    # Extract employee ID from command-line argument
+    employee_id = int(sys.argv[1])
+
+    # Call the function with the provided employee ID
+    get_employee_todo_progress(employee_id)
+
